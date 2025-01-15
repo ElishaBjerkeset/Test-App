@@ -24,27 +24,25 @@
     </div>
 
     <script>
-      const electron = require('electron');
-      const ipcRenderer = electron.ipcRenderer;
-
-      ipcRenderer.on('cpu', (event,data) => {
-        //console.log('cpu % ' + data);
-        document.getElementById('cpu').innerHTML = data.toFixed(2);
+      // Using the exposed window.electron API from preload.js
+      window.electron.on('cpu', (data) => {
+        console.log('CPU % ' + data);
+        document.getElementById('cpu').innerText = data.toFixed(2);
       });
 
-      ipcRenderer.on('mem', (event,data) => {
-        //console.log('Memory % ' + data);
-        document.getElementById('mem').innerHTML = data.toFixed(2);
+      window.electron.on('mem', (data) => {
+        console.log('Memory % ' + data);
+        document.getElementById('mem').innerText = data.toFixed(3);
       });
 
-      ipcRenderer.on('total-mem', (event,data) => {
-        //console.log('Total Memory GB ' + data);
-        document.getElementById('total-mem').innerHTML = data.toFixed(2);
+      window.electron.on('total-mem', (data) => {
+        console.log('Total Memory GB ' + data);
+        document.getElementById('total-mem').innerText = data.toFixed(2);
       });
 
-      ipcRenderer.on('platform', (event,data) => {
-        //console.log('platform ' + data);
-        document.getElementById('platform').innerHTML = data;
+      window.electron.on('platform', (data) => {
+        console.log('Platform ' + data);
+        document.getElementById('platform').innerText = data;
       });
 
     </script>

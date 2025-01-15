@@ -15,12 +15,13 @@ if (started) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      devTools: false, // Disables DevTools
-      nodeIntegration: true,
+      devTools: true, // Disables DevTools
+      nodeIntegration: false, // Disable node integration (for security)
+      contextIsolation: true, // Enable context isolation (for security)
     },
   });
 
@@ -28,26 +29,27 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
-  import('os-utils').then((os) => {
-    os.cpuUsage((v) => {
-      console.log('CPU Usage (%):', v * 100);
-      mainWindow.webContents.send('cpu', v * 100);
-
-      console.log('Free Memory:', os.freemem());
-      mainWindow.webContents.send('mem', os.freemem());
-
-      console.log('Total Memory:', os.totalmem());
-      mainWindow.webContents.send('total-mem', os.totalmem());
-
-      console.log('Platform:', os.platform());
-      mainWindow.webContents.send('platform', os.platform());
+  setInterval(() => {
+    import('os-utils').then((os) => {
+      os.cpuUsage((v) => {
+        //console.log('CPU Usage (%):', v * 100);
+        mainWindow.webContents.send('cpu', v * 100);
+  
+        //console.log('Free Memory:', os.freemem());
+        mainWindow.webContents.send('mem', os.freemem());
+  
+        //console.log('Total Memory:', os.totalmem());
+        mainWindow.webContents.send('total-mem', os.totalmem());
+  
+        //console.log('Platform:', os.platform());
+        mainWindow.webContents.send('platform', os.platform());
+      });
     });
+  }, 1000);
   
-    
-  });
-  
+
 };
 
 // This method will be called when Electron has finished
