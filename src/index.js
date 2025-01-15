@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+const os = require('os-utils');
 import started from 'electron-squirrel-startup';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -22,6 +23,12 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  os.cpuUsage(function(v){
+    console.log("CPU Usage (%): " + v * 100);
+    console.log("Mem Usage (%): " + os.freememPercentage() * 100);
+    console.log("Total Mem (GB): " + os.totalmem() / 1024);
+  });
 };
 
 // This method will be called when Electron has finished
