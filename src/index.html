@@ -6,7 +6,47 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <div class="box">
+      <span class="label">CPU (%)</span>
+      <span id="cpu"></span>
+    </div>
+    <div class="box">
+      <span class="label">Free Memory (%)</span>
+      <span id="mem"></span>
+    </div>
+    <div class="box">
+      <span class="label">Total Memory (GB)</span>
+      <span id="total-mem"></span>
+    </div>
+    <div class="box">
+      <span class="label">Platform</span>
+      <span id="platform"></span>
+    </div>
+
+    <script>
+      const electron = require('electron');
+      const ipcRenderer = electron.ipcRenderer;
+
+      ipcRenderer.on('cpu', (event,data) => {
+        //console.log('cpu % ' + data);
+        document.getElementById('cpu').innerHTML = data.toFixed(2);
+      });
+
+      ipcRenderer.on('mem', (event,data) => {
+        //console.log('Memory % ' + data);
+        document.getElementById('mem').innerHTML = data.toFixed(2);
+      });
+
+      ipcRenderer.on('total-mem', (event,data) => {
+        //console.log('Total Memory GB ' + data);
+        document.getElementById('total-mem').innerHTML = data.toFixed(2);
+      });
+
+      ipcRenderer.on('platform', (event,data) => {
+        //console.log('platform ' + data);
+        document.getElementById('platform').innerHTML = data;
+      });
+
+    </script>
   </body>
 </html>

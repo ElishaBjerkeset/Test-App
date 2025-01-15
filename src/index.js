@@ -1,7 +1,11 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'node:path';
-const os = require('os-utils');
 import started from 'electron-squirrel-startup';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+// Recreate __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -15,6 +19,8 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      devTools: false, // Disables DevTools
+      nodeIntegration: true,
     },
   });
 
@@ -24,11 +30,24 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  os.cpuUsage(function(v){
-    console.log("CPU Usage (%): " + v * 100);
-    console.log("Mem Usage (%): " + os.freememPercentage() * 100);
-    console.log("Total Mem (GB): " + os.totalmem() / 1024);
+  import('os-utils').then((os) => {
+    os.cpuUsage((v) => {
+      console.log('CPU Usage (%):', v * 100);
+      mainWindow.webContents.send('cpu', v * 100);
+
+      console.log('Free Memory:', os.freemem());
+      mainWindow.webContents.send('mem', os.freemem());
+
+      console.log('Total Memory:', os.totalmem());
+      mainWindow.webContents.send('total-mem', os.totalmem());
+
+      console.log('Platform:', os.platform());
+      mainWindow.webContents.send('platform', os.platform());
+    });
+  
+    
   });
+  
 };
 
 // This method will be called when Electron has finished
